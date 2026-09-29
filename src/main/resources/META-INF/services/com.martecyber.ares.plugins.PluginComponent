@@ -1,0 +1,8 @@
+com.martecyber.plugins.caido.CaidoApiIntegrationRepository
+com.martecyber.plugins.caido.CaidoApiTaskRepository
+com.martecyber.plugins.caido.CaidoApiIntegrationGrantRepository
+com.martecyber.plugins.caido.CaidoGraphQLClient
+com.martecyber.plugins.caido.CaidoApiIntegrationService
+com.martecyber.plugins.caido.CaidoApiTaskService
+com.martecyber.plugins.caido.CaidoApiTaskExecutor
+com.martecyber.plugins.caido.CaidoApiTaskScheduler

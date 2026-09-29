@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.martecyber.plugins</groupId>
+    <artifactId>ares-plugin-caido</artifactId>
+    <version>1.0.0-beta1</version>
+    <packaging>jar</packaging>
+    <name>Ares ASM plugin — Caido API</name>
+    <description>
+        Caido (API) integration — Ares calling out to Caido's own GraphQL API directly
+        (PULL_SCOPE/PUSH_FINDINGS). Fully self-contained: owned tables (via hand-written
+        JdbcTemplate DAOs — see CaidoApiIntegration's own doc for why not JPA), admin REST API (via
+        PluginRestController, manual role checks instead of @PreAuthorize), and the 60s task
+        scheduler (@Scheduled, safe as-is on a plugin-loaded bean) all live here. Depends only on
+        ares-sdk, including its AssetFacade/DetectionFacade/CredentialCryptoFacade/PlatformFacade
+        for everything the executor needs from ares-core.
+    </description>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>3.5.7</spring-boot.version>
+        <!-- Must match ares-sdk's own <revision> — see that module's pom.xml. -->
+        <ares-sdk.version>1.0.0</ares-sdk.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/martecyber/ares-sdk</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.martecyber.ares</groupId>
+            <artifactId>ares-sdk</artifactId>
+            <version>${ares-sdk.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- RestTemplateBuilder (CaidoGraphQLClient) lives in plain spring-boot, not spring-web. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Unlike most other plugin modules, this one ships a real test (mock-based, ported
+             verbatim from ares-core's own CaidoApiIntegrationActionHandlerTest) — pulls JUnit/
+             Mockito versions from the spring-boot-dependencies BOM import above. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+            </plugin>
+            <!-- Pinned to a version this environment actually has cached, since the ancient
+                 super-POM default (2.17) isn't — same reasoning as every other plugin module,
+                 but tests DO run here (see the spring-boot-starter-test dependency above). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

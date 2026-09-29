@@ -1,0 +1,14 @@
+{
+  "id": "caido-api",
+  "version": "1.0.0-beta1",
+  "displayName": "Caido",
+  "vendor": "Mart\u00edn Romera",
+  "license": "Proprietary",
+  "description": "Caido (API) integration: Ares drives Caido's own GraphQL API directly (PULL_SCOPE/PUSH_FINDINGS). Fully self-contained \u2014 owned tables, admin API, and the 60s task scheduler all live in this plugin.",
+  "sdkVersion": "1",
+  "icon": "/img/sources/caido.svg",
+  "iconLight": "/img/sources/caido-light.svg",
+  "ownedPathPrefixes": [
+    "/api/v1/caido-api"
+  ]
+}
